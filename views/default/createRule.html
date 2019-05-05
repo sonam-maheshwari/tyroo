@@ -1,0 +1,169 @@
+
+{{extend 'layout.html'}}
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.min.css"/ >
+
+
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+ 
+ 
+ <style>
+ .modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    background-color: #fafafa;
+    padding: 0;
+    max-height: 50%;
+    width: 40%;
+    margin: auto;
+    overflow-y: auto;
+    border-radius: 2px;
+    will-change: top, opacity;
+}
+ .btn{
+    text-decoration: none;
+    color: #fff !important;
+    background-color: blue;
+    text-align: center;
+    letter-spacing: .5px;
+    -webkit-transition: .2s ease-out;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+#add-rule i.left {
+    float: left;
+    margin-right: 10px;
+}
+.edit-campaign{
+	color: blue;
+	cursor: pointer;
+}
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col s12 l12 m12 right">
+			<a class="waves-effect waves-light btn modal-trigger" id="add-rule" href="#modal1"><i class="material-icons left">add</i>button</a>
+		</div>
+	</div>
+	<div class="row campaign-wrapper">
+		<div class="col s12 l12 m12">
+			<table class="striped">
+		        <thead>
+		          <tr>
+		              <th>Rule Name</th>
+		              <th>Campaigns</th>
+		              <th>Rule Schedule</th>
+		              <th>Rule Status</th>
+		              <th>Edit</th>
+		          </tr>
+		        </thead>
+
+		        <tbody>
+		          <tr>
+		            <td>Alvin</td>
+		            <td>Eclair</td>
+		            <td>$0.87</td>
+		            <td>Activated</td>
+		            <td><i class="material-icons left edit-campaign">edit</i></td>
+		          </tr>
+		          <tr>
+		            <td>Alan</td>
+		            <td>Jellybean</td>
+		            <td>$3.76</td>
+		            <td>Activated</td>
+		            <td><i class="material-icons left edit-campaign">edit</i></td>
+		          </tr>
+		          <tr>
+		            <td>Jonathan</td>
+		            <td>Lollipop</td>
+		            <td>$7.00</td>
+		            <td>Activated</td>
+		            <td><i class="material-icons left edit-campaign">edit</i></td>
+		          </tr>
+		        </tbody>
+      		</table>
+		</div>
+	</div>
+	<div id="modal1" class="modal">
+	    <div class="modal-content">
+	       <div class="row">
+			    <form class="col s12">
+			      <div class="row">
+			        <div class="input-field col s12">
+			          <input placeholder="Placeholder" id="first_name" type="text" class="validate">
+			          <label for="first_name">Rule Name</label>
+			        </div>
+			       <div class="input-field col s12">
+					    <select   multiple="multiple">
+					      <option value="" disabled selected>Choose your option</option>
+					      <option value="1">Option 1</option>
+					      <option value="2">Option 2</option>
+					      <option value="3">Option 3</option>
+					    </select>
+   
+  					</div>
+  				</div>
+			      <div class="row">
+			        <div class="input-field col s12">
+			        	<input id="datetimepicker" type="text" >
+			        	<label for="datetimepicker">Schdule time</label>
+			          
+			        </div>
+			      </div>
+			      <div class="row">
+			        <div class="input-field col s12">
+			          <input id="email" type="email" class="validate">
+			          <label for="email">Email</label>
+			        </div>
+			      </div>
+			      <div class="row">
+			        <div class="col s12">
+			        	Status
+			             <p>
+						      <input name="group1" type="radio" id="test1" />
+						      <label for="test1">Activated</label>
+						      <input name="group1" type="radio" id="test2" />
+						      <label for="test2">Deactivated</label>
+						</p>
+     				</div>
+			      </div>
+			      <div class="col s12 l12 m12 right">
+						<a class="waves-effect waves-light btn" >Submit</a>
+				</div>
+			    </form>
+  				</div>
+	    </div>
+	   
+  </div>
+</div>
+
+<script>
+	
+ $('.modal').modal({
+      dismissible: true, // Modal can be dismissed by clicking outside of the modal
+      opacity: .5, // Opacity of modal background
+      inDuration: 300, // Transition in duration
+      outDuration: 200, // Transition out duration
+      startingTop: '4%', // Starting top style attribute
+      endingTop: '10%', // Ending top style attribute
+      ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+        
+        console.log(modal, trigger);
+      },
+      complete: function() {  } // Callback for Modal close
+    }
+  );
+
+   $(document).ready(function() {
+    $('select').material_select();
+  });
+
+ 
+
+</script>
