@@ -154,3 +154,22 @@ if configuration.get('scheduler.enabled'):
 # after defining tables, uncomment below to enable auditing
 # -------------------------------------------------------------------------
 # auth.enable_record_versioning(db)
+
+db.define_table('campaign', Field('name'),format='%(name)s')
+
+db.define_table('campaign_metric', Field('name','text'),
+                                   Field('campaign_id',db.campaign),
+                                   Field('metric','text'),
+                                   Field('metric_value','integer',default=0),
+                                   Field('metric_time','datetime'),
+                                   format='%(name)s')
+
+db.define_table('campaign_rule', Field('name'),
+                                 Field('campaign_id',db.campaign),
+                                 Field('status',requires=IS_IN_SET(('activate','deactivate'))),
+                                 Field('schedule_time','datetime'),
+                                 Field('conditions','text'),
+
+                                 format='%(name)s'
+
+                                    )

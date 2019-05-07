@@ -1,16 +1,36 @@
-
-{{extend 'layout.html'}}
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-<link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.min.css"/ >
-
-
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<script
+			  src="https://code.jquery.com/jquery-2.2.4.min.js"
+			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+			  crossorigin="anonymous"></script>
+    <!-- Compiled and minified CSS -->
+ <!-- Compiled and minified CSS -->
+  
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
- 
- 
+            
+
+
+</head>
+
+<body>
+
+
  <style>
+nav {
+    color: #fff;
+    background-color: blue;
+    width: 100%;
+    height: 56px;
+    line-height: 56px;
+}
  .modal {
     display: none;
     position: fixed;
@@ -18,7 +38,7 @@
     right: 0;
     background-color: #fafafa;
     padding: 0;
-    max-height: 50%;
+    max-height: 60%;
     width: 40%;
     margin: auto;
     overflow-y: auto;
@@ -44,11 +64,23 @@
 	cursor: pointer;
 }
 </style>
-
+<div class="row">
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Logo</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="sass.html">Sass</a></li>
+        <li><a href="badges.html">Components</a></li>
+        <li><a href="collapsible.html">JavaScript</a></li>
+      </ul>
+    </div>
+  </nav>
+</div>
 <div class="container">
+
 	<div class="row">
 		<div class="col s12 l12 m12 right">
-			<a class="waves-effect waves-light btn modal-trigger" id="add-rule" href="#modal1"><i class="material-icons left">add</i>button</a>
+			<a class="waves-effect waves-light btn modal-trigger" id="add-rule" href="#modal1"><i class="material-icons left">add</i>Add Rule</a>
 		</div>
 	</div>
 	<div class="row campaign-wrapper">
@@ -65,14 +97,16 @@
 		        </thead>
 
 		        <tbody>
-		          <tr>
-		            <td>Alvin</td>
-		            <td>Eclair</td>
-		            <td>$0.87</td>
-		            <td>Activated</td>
+		        {{for row in ruleQuery:}}
+		          <tr id="{{row.campaign_rule.id}}">
+		            <td>{{=row.campaign_rule.name}}</td>
+		            <td>{{=row.campaign.name}}r</td>
+		            <td>{{=row.campaign_rule.schedule_time}}</td>
+		            <td>{{=(row.campaign_rule.status).title()}}</td>
 		            <td><i class="material-icons left edit-campaign">edit</i></td>
 		          </tr>
-		          <tr>
+		          {{pass}}
+		         <!--  <tr>
 		            <td>Alan</td>
 		            <td>Jellybean</td>
 		            <td>$3.76</td>
@@ -85,7 +119,7 @@
 		            <td>$7.00</td>
 		            <td>Activated</td>
 		            <td><i class="material-icons left edit-campaign">edit</i></td>
-		          </tr>
+		          </tr> -->
 		        </tbody>
       		</table>
 		</div>
@@ -96,30 +130,32 @@
 			    <form class="col s12">
 			      <div class="row">
 			        <div class="input-field col s12">
-			          <input placeholder="Placeholder" id="first_name" type="text" class="validate">
-			          <label for="first_name">Rule Name</label>
+			          <input placeholder="Placeholder" id="name" type="text" class="validate">
+			          <label for="name">Rule Name</label>
 			        </div>
 			       <div class="input-field col s12">
-					    <select   multiple="multiple">
+					    <select  name="campaigns" multiple="multiple">
 					      <option value="" disabled selected>Choose your option</option>
-					      <option value="1">Option 1</option>
-					      <option value="2">Option 2</option>
-					      <option value="3">Option 3</option>
+					      {{for val in data:}}
+					      <option value="{{=val.id}}">{{=val.name}}</option>
+					      {{pass}}
+
 					    </select>
    
   					</div>
   				</div>
 			      <div class="row">
 			        <div class="input-field col s12">
-			        	<input id="datetimepicker" type="text" >
+			        	
+ 						<input type="text" name="datetimepicker" class="timepicker">
 			        	<label for="datetimepicker">Schdule time</label>
 			          
 			        </div>
 			      </div>
 			      <div class="row">
 			        <div class="input-field col s12">
-			          <input id="email" type="email" class="validate">
-			          <label for="email">Email</label>
+			          <input id="rule" >
+			          <label for="rule">Rule</label>
 			        </div>
 			      </div>
 			      <div class="row">
@@ -142,9 +178,18 @@
 	   
   </div>
 </div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
 <script>
-	
+$("#rule").on('blur',function(){
+	// alert("sonam is awesome")
+	var is_check = isCondition($(this).val())
+	if(!is_check){
+		Materialize.toast('Invaild Rule',3000,'blue')
+	}
+	// alert(is_check/)
+
+})
  $('.modal').modal({
       dismissible: true, // Modal can be dismissed by clicking outside of the modal
       opacity: .5, // Opacity of modal background
@@ -159,11 +204,33 @@
       complete: function() {  } // Callback for Modal close
     }
   );
-
    $(document).ready(function() {
     $('select').material_select();
   });
 
+ $('.timepicker').pickatime({
+    default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+    fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+    twelvehour: false, // Use AM/PM or 24-hour format
+    donetext: 'OK', // text for done-button
+    cleartext: 'Clear', // text for clear-button
+    canceltext: 'Cancel', // Text for cancel-button,
+    container: undefined, // ex. 'body' will append picker to body
+    autoclose: false, // automatic close timepicker
+    ampmclickable: true, // make AM PM clickable
+    aftershow: function(){} //Function for after opening timepicker
+  });
+function isCondition(condition) {
+        var regex = /^([A-Za-z\s])+([><=!\s])+([0-9\s])+(and)+([A-Za-z\s])+([><=!\s])+([0-9\s])$/;
+        return regex.test(condition);
+ }
+  
+  $.ajax(
+  	{url: "demo_test.txt", success: function(result){
+    $("#div1").html(result);
+  }});
  
-
 </script>
+
+</body>
+</html> 

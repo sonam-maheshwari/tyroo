@@ -64,7 +64,26 @@ def test():
           # If reply_to is omitted, then mail.settings.sender is used
           reply_to='smsonam.maheshwari@gmail.com',
           message='hi there')
+
     return x
 
 def createRule():
+    import json
+    data = db(db.campaign.id>0).select()
+    ruleQuery = db((db.campaign_rule.id>0)&
+                   (db.campaign_rule.campaign_id == db.campaign.id)).select()
+    
+    # return BEAUTIFY(data)
+    # temp = []
+    # for val in data:
+    #     temp.append(val)
+
     return locals()
+
+def caampaign_name():
+    import json
+    data = db(db.caampaign.id>0).select()
+    temp = []
+    for val in data:
+        temp.append(val)
+    return json.dumps(temp)

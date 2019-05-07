@@ -116,3 +116,29 @@ CREATE TABLE "scheduler_task_deps"(
     "can_visit" CHAR(1)
 );
 success!
+timestamp: 2019-05-07T22:23:38.696007
+CREATE TABLE "campaign"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512)
+);
+success!
+timestamp: 2019-05-07T22:35:28.431743
+CREATE TABLE "campaign_metric"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT,
+    "campaign_id" INTEGER REFERENCES "campaign" ("id") ON DELETE CASCADE  ,
+    "metric" TEXT,
+    "metric_value" INTEGER,
+    "metric_time" TIMESTAMP
+);
+success!
+timestamp: 2019-05-07T22:44:25.416874
+CREATE TABLE "campaign_rule"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512),
+    "campaign_id" INTEGER REFERENCES "campaign" ("id") ON DELETE CASCADE  ,
+    "status" CHAR(512),
+    "schedule_time" TIMESTAMP,
+    "conditions" TEXT
+);
+success!
