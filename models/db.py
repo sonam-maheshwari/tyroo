@@ -167,7 +167,7 @@ db.define_table('campaign_metric', Field('name','text'),
 db.define_table('campaign_rule', Field('name'),
                                  Field('campaign_id',db.campaign),
                                  Field('status',requires=IS_IN_SET(('activate','deactivate'))),
-                                 Field('schedule_time','datetime'),
+                                 Field('schedule_time','time'),
                                  Field('conditions','text'),
 
                                  format='%(name)s'

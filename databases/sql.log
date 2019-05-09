@@ -142,3 +142,4 @@ CREATE TABLE "campaign_rule"(
     "conditions" TEXT
 );
 success!
+success!

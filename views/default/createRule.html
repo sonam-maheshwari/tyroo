@@ -64,6 +64,8 @@ nav {
 	cursor: pointer;
 }
 </style>
+{{import json 
+import datetime}}
 <div class="row">
   <nav>
     <div class="nav-wrapper">
@@ -98,7 +100,13 @@ nav {
 
 		        <tbody>
 		        {{for row in ruleQuery:}}
-		          <tr id="{{row.campaign_rule.id}}">
+		        		{{temp = dict(name = row.campaign_rule.name,
+		        						id = row.campaign_rule.id,
+		        						schdule_time =datetime.time.strftime(row.campaign_rule.schedule_time, '%H:%M'),
+		        						status = row.campaign_rule.status,
+		        						campaign_id = row.campaign.id,
+		        						conditions=row.campaign_rule.conditions)}}
+		          <tr data-id="{{=row.campaign_rule.id}}" data-campaign="{{=json.dumps(temp)}}">
 		            <td>{{=row.campaign_rule.name}}</td>
 		            <td>{{=row.campaign.name}}r</td>
 		            <td>{{=row.campaign_rule.schedule_time}}</td>
@@ -134,7 +142,7 @@ nav {
 			          <label for="name">Rule Name</label>
 			        </div>
 			       <div class="input-field col s12">
-					    <select  name="campaigns" multiple="multiple">
+					    <select  name="campaigns"  id="campaigns" multiple="multiple">
 					      <option value="" disabled selected>Choose your option</option>
 					      {{for val in data:}}
 					      <option value="{{=val.id}}">{{=val.name}}</option>
@@ -162,15 +170,15 @@ nav {
 			        <div class="col s12">
 			        	Status
 			             <p>
-						      <input name="group1" type="radio" id="test1" />
+						      <input name="status" type="radio" id="test1" value="activated"/>
 						      <label for="test1">Activated</label>
-						      <input name="group1" type="radio" id="test2" />
+						      <input name="status" type="radio" id="test2" value="deactivated"/>
 						      <label for="test2">Deactivated</label>
 						</p>
      				</div>
 			      </div>
-			      <div class="col s12 l12 m12 right">
-						<a class="waves-effect waves-light btn" >Submit</a>
+			      <div class="col s12 l12 m12 center">
+						<a class="waves-effect waves-light btn" id ="submit-btn">Submit</a>
 				</div>
 			    </form>
   				</div>
@@ -178,6 +186,7 @@ nav {
 	   
   </div>
 </div>
+</body>
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
 
 <script>
@@ -224,13 +233,104 @@ function isCondition(condition) {
         var regex = /^([A-Za-z\s])+([><=!\s])+([0-9\s])+(and)+([A-Za-z\s])+([><=!\s])+([0-9\s])$/;
         return regex.test(condition);
  }
-  
-  $.ajax(
-  	{url: "demo_test.txt", success: function(result){
-    $("#div1").html(result);
-  }});
+
+$("#submit-btn").on('click',function(){
+	var name =  $("#name").val();
+	var campaigns = JSON.stringify($("#campaigns").val());
+	var datetimepicker = $("input[name=datetimepicker]").val()
+	var rule = $("#rule").val()
+	var status = $('input[name=status]:checked').val();
+	var id = $(this).attr('data-id');
+	alert(id)
+	console.log(name,campaigns,datetimepicker,rule,status,"maheshwari")
+	if(!name){
+		Materialize.toast("Enter name",3000,'blue')
+		return false
+	}
+	if(!rule){
+		Materialize.toast("Enter rule",3000,'blue')
+		return false
+	}
+	if(!datetimepicker){
+		Materialize.toast("Enter Schdule time",3000,'blue')
+		return false
+	}
+	if(!status){
+		Materialize.toast("Choose status",3000,'blue')
+		return false
+	}
+	if(campaigns.length==0){
+		Materialize.toast("Choose campaigns",3000,'blue')
+		return false
+	}
+
+	$.ajax(
+  	{
+  	type: "POST",
+  	url: "{{=URL('default','saveRule')}}",
+  	data :{
+  			'name':name,'campaigns':campaigns,
+  			'datetimepicker':datetimepicker,
+  			'rule':rule,'status':status,'id':id
+  		}, 
+  	success: function(result){
+  					if(id == 0){
+								$('tbody').append( '<tr>'+
+										'		            <td>'+name+'</td>'+
+										'		            <td>'+campaigns+'</td>'+
+										'		            <td>'+datetimepicker+'</td>'+
+										'		            <td>'+status+'</td>'+
+										'		            <td><i class="material-icons left edit-campaign">edit</i></td>'+
+										'		         					 </tr>')
+							}
+	
+
+    			// $("#div1").html(result); 
+
+
+	 },
+	error: function(result){
+    			Materialize.toast("Something Went wrong",3000,"blue")
  
+
+	 }
+	});
+
+
+}); 
+
+$(".edit-campaign").on('click',function(){
+	var id = $(this).closest('tr').data('id')
+	var data = $(this).closest('tr').data('campaign');
+	$("#submit-btn").attr('data-id',data['id']);
+	$("#name").val(data['name']);
+	$("#rule").val(data['conditions'])
+	$("input[name=datetimepicker]").val(data['schdule_time'])
+	// $('select').destroy();
+	$("#campaigns option").prop("selected", false);
+	$("#campaigns option[value='" + data['campaign_id'] + "']").prop("selected", true);
+	$('select').material_select()
+	$("input[name=status][value=" + data['status'] + "]").attr('checked', 'checked');
+	// });
+	$('.modal').modal('open')
+	console.log("sonam is awesome",data)
+
+	// alert(i.d)
+});
+$("#add-rule").on('click',function(){
+	// $("form").reset();
+	// $("#submit-btn").attr('data-id',data['id']);
+	$("#name").val('');
+	$("#rule").val('')
+	$("input[name=datetimepicker]").val('')
+	// $('select').destroy();
+	$("#campaigns option").prop("selected", false);
+	$('select').material_select()
+	$("input[name=status]").prop('checked', false);
+	$("#submit-btn").attr('data-id',0);
+});
+
 </script>
 
-</body>
-</html> 
+ 
+</html>

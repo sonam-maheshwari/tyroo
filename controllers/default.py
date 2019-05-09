@@ -80,6 +80,29 @@ def createRule():
 
     return locals()
 
+def saveRule():
+
+    import datetime,json
+    name = request.vars.name
+    rule = request.vars.rule
+    campaign = json.loads(request.vars.campaigns)
+    datetimepicker =request.vars.datetimepicker
+    status = request.vars.status
+    # raise ValueError(requestvars)
+
+    time=datetime.datetime.strptime(datetimepicker, '%H:%M')
+
+    for val in campaign:
+        db.campaign_rule.update_or_insert((db.campaign_rule.id == request.vars.id),
+                                name=name,
+                                campaign_id=val,
+                                schedule_time=time,
+                                status=status,
+                                conditions=rule)
+    # raise ValueError(request.vars)
+
+    return "success"
+
 def caampaign_name():
     import json
     data = db(db.caampaign.id>0).select()
