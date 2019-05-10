@@ -98,7 +98,8 @@ def saveRule():
                                 campaign_id=val,
                                 schedule_time=time,
                                 status=status,
-                                conditions=rule)
+                                conditions=rule,
+                                next_run_time = datetime.datetime.now().date)
     # raise ValueError(request.vars)
 
     return "success"
@@ -121,22 +122,36 @@ def createData():
     for row in campaign_ids:
         # for row1 in materic_list:
         db.campaign_metric.insert(campaign_id=row,
-                                    # metric=row1,
                                     impression=random.randrange(1000,100000, 2),
                                     clicks=random.randrange(1,50, 2),
                                     spend=random.randrange(10,50, 2),
                                     install=random.randrange(1,20, 2),
                                     metric_time= datetime.datetime.now()+datetime.timedelta(hours=hour)
+
                                     )
 
 
 def checkCampaign():
     import re
+    import datetime
+
+    import smtplib
     ruleQuery = db((db.campaign_rule.id>0)&
-                   (db.campaign_rule.campaign_id == db.campaign.id)&(db.campaign_rule.status == 'activated')).select()
-    if ruleQuery:
+                   (db.campaign_rule.campaign_id == db.campaign.id)&(db.campaign_rule.next_run_time != None)).select()
+
+    activeQuery = ruleQuery.find(lambda x:x.campaign_rule.status == 'activated')
+    deactivateQuery = ruleQuery.find(lambda x:(x.campaign_rule.status == 'dectivated')&
+                                                ((x.campaign_rule.next_run_time <= datetime.datetime.now().date())&
+                                                    ((x.campaign_rule.next_run_time >= datetime.datetime.now().time()))))
+    if deactivateQuery:
+        deactivateList = [y.campaign_rule.id for y in deactivateQuery]
+        db(db.campaign_rule.id.belongs(deactivateList)).update(status = 'activated')
+        db.commit()
+    # return BEAUTIFY(activeQuery)
+
+    if activeQuery:
         tempList = []
-        for val in ruleQuery:
+        for val in activeQuery:
             matricQuery = db((db.campaign_metric.campaign_id == val.campaign.id)).select(orderby=~db.campaign_metric.id).first()
             impressions = matricQuery.impression
             clicks = matricQuery.clicks
@@ -146,10 +161,16 @@ def checkCampaign():
             eCPC = spend / clicks
             eCPI =spend / install
             conditions = val.campaign_rule.conditions
+
             try:
                 ans =  eval(conditions)
                 tempList.append(val.campaign_rule.id)
                 if ans:
+                    db(db.campaign_rule.id == val.campaign.id).update(status='deactivate',
+                                                                    next_run_time=datetime.datetime.now().date()+datetime.timedelta(days=1)
+                                                                    )
+
+                    db.commit()
                     mail.send(to=['sonammaheshwari72@gmail.com'],
                                       subject='hello',
                                       reply_to='smsonam.maheshwari@gmail.com',
@@ -157,7 +178,26 @@ def checkCampaign():
             except:
                 pass
 
+    return 1
 
-        return BEAUTIFY(tempList)
+def test():
+    import smtplib
 
-    return BEAUTIFY(ruleQuery)
+    message = """From: From Person <from@fromdomain.com>
+    To: To Person <to@todomain.com>
+    MIME-Version: 1.0
+    Content-type: text/html
+    Subject: SMTP HTML e-mail test
+
+    This is an e-mail message to be sent in HTML format
+
+    <b>This is HTML message.</b>
+    <h1>This is headline.</h1>
+    """
+
+    # try:
+    smtpObj = smtplib.SMTP('localhost')
+    smtpObj.sendmail('sonammaheshwari72@gmail.com', 'sonammaheshwari72@gmail.com', message)         
+    print "Successfully sent email"
+    # except SMTPException:
+    #    print "Error: unable to send email"

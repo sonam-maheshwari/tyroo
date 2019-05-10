@@ -171,6 +171,7 @@ db.define_table('campaign_rule', Field('name'),
                                  Field('status',requires=IS_IN_SET(('activate','deactivate'))),
                                  Field('schedule_time','time'),
                                  Field('conditions','text'),
+                                 Field('next_run_time','date'),
 
                                  format='%(name)s'
 
