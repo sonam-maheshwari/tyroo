@@ -35,7 +35,7 @@
 	 insert a new record from auth_group
 	 insert auth_membership 
 
-## Schduler Service Run - 
+## Scheduler Service Run - 
 	cd /home/www-dev/web2py
 	run sudo python web2py.py -K tyroo
 
