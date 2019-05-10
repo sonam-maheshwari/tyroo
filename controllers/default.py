@@ -67,6 +67,8 @@ def test():
 
     return x
 
+@auth.requires_membership('admin') 
+
 def createRule():
     import json
     data = db(db.campaign.id>0).select()
@@ -116,7 +118,7 @@ def createData():
     import datetime
     import random 
     data = db(db.campaign.id>0).select()
-    hour = request.vars.hour if request.vars.hour else 0
+    hour = int(request.vars.hour) if request.vars.hour else 0
     campaign_ids = [val.id for val in data]
     # materic_list = ['clicks','Installs','impressions','spend']
     for row in campaign_ids:
