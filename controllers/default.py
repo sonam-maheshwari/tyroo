@@ -110,3 +110,54 @@ def caampaign_name():
     for val in data:
         temp.append(val)
     return json.dumps(temp)
+
+def createData():
+    import datetime
+    import random 
+    data = db(db.campaign.id>0).select()
+    hour = request.vars.hour if request.vars.hour else 0
+    campaign_ids = [val.id for val in data]
+    # materic_list = ['clicks','Installs','impressions','spend']
+    for row in campaign_ids:
+        # for row1 in materic_list:
+        db.campaign_metric.insert(campaign_id=row,
+                                    # metric=row1,
+                                    impression=random.randrange(1000,100000, 2),
+                                    clicks=random.randrange(1,50, 2),
+                                    spend=random.randrange(10,50, 2),
+                                    install=random.randrange(1,20, 2),
+                                    metric_time= datetime.datetime.now()+datetime.timedelta(hours=hour)
+                                    )
+
+
+def checkCampaign():
+    import re
+    ruleQuery = db((db.campaign_rule.id>0)&
+                   (db.campaign_rule.campaign_id == db.campaign.id)&(db.campaign_rule.status == 'activated')).select()
+    if ruleQuery:
+        tempList = []
+        for val in ruleQuery:
+            matricQuery = db((db.campaign_metric.campaign_id == val.campaign.id)).select(orderby=~db.campaign_metric.id).first()
+            impressions = matricQuery.impression
+            clicks = matricQuery.clicks
+            spend = matricQuery.spend
+            install = matricQuery.install
+            eCPM = spend * 1000 / impressions
+            eCPC = spend / clicks
+            eCPI =spend / install
+            conditions = val.campaign_rule.conditions
+            try:
+                ans =  eval(conditions)
+                tempList.append(val.campaign_rule.id)
+                if ans:
+                    mail.send(to=['sonammaheshwari72@gmail.com'],
+                                      subject='hello',
+                                      reply_to='smsonam.maheshwari@gmail.com',
+                                      message=' Stop campaign')
+            except:
+                pass
+
+
+        return BEAUTIFY(tempList)
+
+    return BEAUTIFY(ruleQuery)

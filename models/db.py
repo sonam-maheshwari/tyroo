@@ -155,12 +155,14 @@ if configuration.get('scheduler.enabled'):
 # -------------------------------------------------------------------------
 # auth.enable_record_versioning(db)
 
-db.define_table('campaign', Field('name'),format='%(name)s')
+db.define_table('campaign', Field('name'),auth.signature,format='%(name)s')
 
-db.define_table('campaign_metric', Field('name','text'),
+db.define_table('campaign_metric', 
                                    Field('campaign_id',db.campaign),
-                                   Field('metric','text'),
-                                   Field('metric_value','integer',default=0),
+                                   Field('impression','float',default=0.0),
+                                   Field('clicks','float',default=0.0),
+                                   Field('spend','float',default=0.0),
+                                   Field('install','float',default=0.0),
                                    Field('metric_time','datetime'),
                                    format='%(name)s')
 
