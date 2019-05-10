@@ -40,7 +40,7 @@
 	run sudo python web2py.py -K tyroo
 
 
-## Main file
+## files
 	1. controllers/default.py
 	2.views/default/createRule.html
 	3.models/db.py
